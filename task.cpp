@@ -33,8 +33,8 @@ using namespace std;
 #define pv(v) forn(i, sz(v)) cout << v[i] << " "; cout << endl;
 #define pa(a, n) forn(i, n) cout << a[i] << " "; cout << endl;
 
-template<typename T> inline T abs(T a){ return ((a < 0) ? -a : a); }
-template<typename T> inline T sqr(T a){ return a * a; }
+template<typename T> inline T abs(T a) { return ((a < 0) ? -a : a); }
+template<typename T> inline T sqr(T a) { return a * a; }
 
 typedef long long ll;
 typedef long double ld;
@@ -45,43 +45,69 @@ typedef pair<int, int> pr;
 #define vll vector<ll> 
 #define vull vector<ull> 
 
-int n, m, w;
-vi a;
+vector<int> d;
+vector<int> h;
 
-bool check(int x) {
-	int ms = 0;
-	vi eff(n, 0);
-	int effc = 0;
-	forn(i, n) {
-		if (i - w >= 0) effc -= eff[i - w];
-		int diff = x - a[i] - effc;
-		if (diff <= 0) continue;
-		
-		ms += diff;
-		if (ms > m) return false;
-		eff[i] = diff;
-		effc += diff;	 
-	}
-	return ms <= m;
+int dist(int i, int j, const vector<int>& v) {
+    int ret = 0;
+    for (int t = i; t < j; t++) {
+        ret += d[v[t]];
+    } 
+    return ret;
+}
+
+int energy(int i, int j, const vector<int>& v) {
+    return 2*(h[v[i]] + h[v[j]]) + dist(i, j, v);
 }
 
 int main() {
-	cin >> n >> m >> w;
-	a.resize(n);
-	forn(i, n) cin >> a[i];
-	
-	int l = 1;
-	int r = *std::max_element(all(a)) + m;
-	int x;
-	while (l <= r) {
-        int md = (l + r) >> 1;
-        if (check(md)) {
-            x = md;
-            l = md + 1;
-        } else
-            r = md - 1;
+    int n, m;
+    cin >> n >> m;
+    d = vector<int>(n, 0);
+    for (int i = 0; i < n; i++) {
+        cin >> d[i];
     }
-	cout << x;
+
+    h= vector<int>(n, 0);
+    for (int i = 0; i < n; i++) {
+        cin >> h[i];
+    }
+
+    vector<pair<int, int>> days;
+    for (int i = 0; i < m; i++) {
+        int a, b;
+        cin >> a >> b;
+        days.push_back(make_pair(a - 1, b - 1));
+    }
+
+    for (auto p : days) {
+        vector<int> t;
+        if (p.first <= p.second) {
+            for (int i = p.second + 1; i < d.size(); i++) {
+                t.push_back(i);
+            }
+            for (int i = 0; i < p.first; i++) {
+                t.push_back(i);
+            }
+        } else {
+            for (int i = p.second + 1; i < p.first; i++) {
+                t.push_back(i);
+            }
+        }
+ 
+    int max = 0;
+    for (int i = 0; i < t.size(); i++) {
+        for (int j = i + 1; j < t.size(); j++) {
+            int e = energy(i, j, t);
+            if (e > max) {
+                max = e;
+            }
+        }
+    }
+
+    cout << max << endl; 
+
+    }
 }
 
 
