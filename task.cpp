@@ -1,40 +1,29 @@
+#include <iostream>
 #include <algorithm>
 #include <functional>
 #include <numeric>
-#include <iostream>
-#include <cstdio>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <cstring>
-#include <cassert>
 #include <vector>
-#include <list>
 #include <map>
-#include <set>
+#include <unordered_map>
 #include <deque>
 #include <queue>
-#include <bitset>
-#include <sstream>
+#include <stack>
+#include <set>
+#include <list>
+#include <limits.h>
 
 using namespace std;
 
-#define fore(i, l, r) for (int i = int(l); i < int(r); ++i)
-#define forz(i, n) fore (i, 1, n + 1)
-#define forn(i, n) fore (i, 0, n)
-#define fori(i, l, r) fore(i, l, (r) + 1)
-#define forit(i, a) for (typeof((a).begin()) i = (a).begin(); i != (a).end(); ++i)
-#define sz(v) int((v).size())
-#define all(v) (v).begin(), (v).end()
 #define pb push_back
 #define mp make_pair
 #define st first
 #define nd second
-#define pv(v) forn(i, sz(v)) cout << v[i] << " "; cout << endl;
-#define pa(a, n) forn(i, n) cout << a[i] << " "; cout << endl;
 
-template<typename T> inline T abs(T a) { return ((a < 0) ? -a : a); }
+//template<typename T> inline T abs(T a) { return ((a < 0) ? -a : a); }
 template<typename T> inline T sqr(T a) { return a * a; }
+template<typename T> ostream& operator << (ostream& os, vector<T> v) {for (int i = 0; i < v.size(); i++) cout << v[i] << " "; cout << endl; }
+void print() { cout << endl; }
+template<typename T, typename... Ts> void print(T x, Ts... xs) { cout << x << " "; print(xs...); };
 
 typedef long long ll;
 typedef long double ld;
@@ -45,70 +34,36 @@ typedef pair<int, int> pr;
 #define vll vector<ll> 
 #define vull vector<ull> 
 
-vector<int> d;
-vector<int> h;
+vector<vector<int>> m;
 
-int dist(int i, int j, const vector<int>& v) {
-    int ret = 0;
-    for (int t = i; t < j; t++) {
-        ret += d[v[t]];
-    } 
-    return ret;
+int area(int llx, int lly, int urx, int ury) {
+    return (urx - llx + 1)*(ury - lly + 1);
 }
 
-int energy(int i, int j, const vector<int>& v) {
-    return 2*(h[v[i]] + h[v[j]]) + dist(i, j, v);
+bool ones(int llx, int lly, int urx, int ury) {
+    for (int i = llx; i < urx + 1; i++) {
+        for (int j = lly; j < ury + 1; j++) {
+            if (!m[i][j]) return false;
+        }
+    }
+    return true;
 }
-
+    
 int main() {
-    int n, m;
-    cin >> n >> m;
-    d = vector<int>(n, 0);
-    for (int i = 0; i < n; i++) {
-        cin >> d[i];
-    }
-
-    h= vector<int>(n, 0);
-    for (int i = 0; i < n; i++) {
-        cin >> h[i];
-    }
-
-    vector<pair<int, int>> days;
-    for (int i = 0; i < m; i++) {
-        int a, b;
-        cin >> a >> b;
-        days.push_back(make_pair(a - 1, b - 1));
-    }
-
-    for (auto p : days) {
-        vector<int> t;
-        if (p.first <= p.second) {
-            for (int i = p.second + 1; i < d.size(); i++) {
-                t.push_back(i);
-            }
-            for (int i = 0; i < p.first; i++) {
-                t.push_back(i);
-            }
-        } else {
-            for (int i = p.second + 1; i < p.first; i++) {
-                t.push_back(i);
+    int n; cin >> n;
+    m = vector<vector<int>>(5, vector<int>(5));
+    int maxArea = 0;
+    for (int i = 0; i < n; i++) for (int j = 0; j < n; j++) cin >> m[i][j];
+    for (int llx = 0; llx < n - 1; llx++) for (int lly = 0; lly < n - 1; lly++) 
+        for (int urx = 1; urx < n; urx++) for (int ury = 1; ury < n; ury++) {
+            int newArea = area(llx, lly, urx, ury);
+            if ((newArea > maxArea) && (ones(llx, lly, urx, ury))) {rr
+                maxArea = newArea;
             }
         }
- 
-    int max = 0;
-    for (int i = 0; i < t.size(); i++) {
-        for (int j = i + 1; j < t.size(); j++) {
-            int e = energy(i, j, t);
-            if (e > max) {
-                max = e;
-            }
-        }
-    }
 
-    cout << max << endl; 
-
-    }
-}
+    cout << maxArea;
+}   
 
 
 
